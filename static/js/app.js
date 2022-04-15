@@ -7,9 +7,121 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
-var queryUrl = "http://127.0.0.1:5000/test"
+// Fetch the JSON data and console log it
+var queryUrl3 = "http://127.0.0.1:5000/test3"
+
+
+        
+d3.json(queryUrl3).then(function (data) {
+    console.log(data);
+    
+
+    function dynamicColors() {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+    }
+    
+    function poolColors(a) {
+        var pool = [];
+        for(i = 0; i < a; i++) {
+            pool.push(dynamicColors());
+        }
+        return pool;
+    }
+
+    const ctx = document.getElementById('myChart');
+    const myChart= new Chart(ctx, {
+        type: 'polarArea',
+        data: {
+            labels : data.shapes,
+            datasets: [{
+                label: 'UFO Shapes',
+                data: data.count,
+                backgroundColor: poolColors(data.count.length)
+        }]        
+        },
+        options: {
+            maintainAspectRatio: true,
+            scale: {
+              reverse: false,
+              ticks: {
+                min: 0,
+                max: 1000
+              }
+            }
+        }
+          
+      })
+      
+
+})
 
 // Fetch the JSON data and console log it
+var queryUrl2 = "http://127.0.0.1:5000/test2"
+
+
+    
+d3.json(queryUrl2).then(function (data) {
+    console.log(data);
+    
+    function dynamicColors() {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+    }
+    
+    function poolColors(a) {
+        var pool = [];
+        for(i = 0; i < a; i++) {
+            pool.push(dynamicColors());
+        }
+        return pool;
+    }
+
+    var trace1 = {
+        type: "bar",
+        x: data.states,
+        y: data.sightings,
+        orientation: "v",
+        marker: {color: poolColors(data.sightings.length)}
+                
+    };
+
+    var data1 = [trace1];
+    var title = "UFO shape sightings by State";
+
+    // Apply a title to the layout
+    var layout1 = {
+        title: {
+            text: 'UFO shape sightings by States and Provinces'
+        },
+        xaxis: {
+            title: {text:'States and Provinces'},
+            tickmode: 'linear'
+        },
+        yaxis: {
+            title: {text: "Number of Sightings"},
+            tickmode: 'linear',
+            tick0: 0,
+            dtick: 10
+        }, 
+        autosize: false,
+        width: 1500,
+        height: 800
+    
+ };
+ Plotly.newPlot("bar", data1, layout1);
+        
+})
+
+
+
+// Fetch the JSON data and console log it
+var queryUrl = "http://127.0.0.1:5000/test"
+
 
 d3.json(queryUrl).then(function (data) {
     console.log(data);
@@ -31,62 +143,12 @@ d3.json(queryUrl).then(function (data) {
         city_latitude.push(data[i].city_latitude);
         city_longitude.push(data[i].city_longitude);
     };
+
     theMarker = new L.marker([data[0].city_latitude, data[0].city_longitude]).addTo(myMap);
     theMarker.bindPopup(`<h1>${data[0].state}</h1><h2>${data[0].city}</h2> <hr> <h3>UFO Shape: ${data[0].shape}</h3>`)
-    console.log(state);
-    var trace1 = {
-        type: "bar",
-        x: state,
-        y: shape,
-        orientation: "v",
-        transforms: {
-                type: 'filter',
-                target: shape,
-                operation: "=",
-                value: "other"
-        }
-                
- };
-        
-    var data1 = [trace1];
-    var title = "UFO shape sightings by State";
+    myMap.setView([data[0].city_latitude, data[0].city_longitude], 4);
+    console.log(shape);
 
-    // Apply a title to the layout
-    var layout1 = {
-        title: {
-            text: 'UFO shape sightings by State'
-        },
-        xaxis: {
-            title: {text:'states'}
-        }
-    };
-
-    // Render the plot to the div tag with id "plot"
-    Plotly.newPlot("bar", data1, layout1);
-
-//     let trace2 = {
-//         x:ex['otu_ids'],
-//         y:ex['sample_values'],
-//         mode:'markers',
-//         test:ex['otu_labels'],
-//         marker: {
-//             size:ex['sample_values'],
-//             color:ex['otu_ids']
-//         }
-//     };
-//     var layout2 = {
-//         title: {
-//             text: 'OTU Bubble Chart'
-//         },
-//         xaxis: {
-//             title: {text:'OTU Number'}
-//         },
-//         yaxis: {
-//             title: {text:'Value'}
-//         }
-//     };
-//     var data2 = [trace2];
-//     Plotly.newPlot("bubble",data2,layout2)
 
     // Demographics Info
     let meta = data[0];
@@ -95,28 +157,6 @@ d3.json(queryUrl).then(function (data) {
         demographics += key+" : "+value+"<br>";
     }
     document.getElementById("sample-metadata").innerHTML = demographics
-
-    // Gauge Plot
-//     let data3 = [{
-//         domain: {x:[0,1],y:[0,1]},
-//         value:data['metadata'][0].wfreq,
-//         title: {text:"Weekly Belly Button Wash Frequency"},
-//         type:"indicator",
-//         mode:"gauge+number",
-//         gauge: {
-//             axis: {range: [0,9],
-//                 tickvals:[0,1,2,3,4,5,6,7,8,9]
-//             },
-//             steps: {range:[0,9]}
-//         }
-//     }]
-//     let layout3 = {
-//         width:600,
-//         height:450,
-//         margin: {t:0, b:0}
-//     };
-//     Plotly.newPlot("gauge",data3,layout3);
-
 
     for (var j = 0; j < city.length; j++) {
         var dropdown = document.getElementById("selDataset");
@@ -166,7 +206,8 @@ d3.json(queryUrl).then(function (data) {
                         myMap.removeLayer(theMarker);
                   }    
         theMarker = new L.marker([data[f].city_latitude, data[f].city_longitude]).addTo(myMap);
-        theMarker.bindPopup(`<h1>${data[f].state}</h1><h2>${data[f].city}</h2> <hr> <h3>UFO Shape: ${data[f].shape}</h3>`)    
+        theMarker.bindPopup(`<h1>${data[f].state}</h1><h2>${data[f].city}</h2> <hr> <h3>UFO Shape: ${data[f].shape}</h3>`) 
+        myMap.setView([data[f].city_latitude, data[f].city_longitude], 4);   
                 console.log(theMarker)          
                 
                 // // Bubble Chart

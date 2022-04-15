@@ -6,9 +6,10 @@ body {
   
   /* Set map, body, and html to 100% of the screen size. */
   #map,
-  body,
   html {
-    height: 0%;
-    width: 0%;
+    height: 200px;
   }
-  
+.center {
+  margin: 50px 25%;
+
+}
