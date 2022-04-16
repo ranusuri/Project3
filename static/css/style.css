@@ -2,6 +2,7 @@
 body {
     padding: 0;
     margin: 0;
+
   }
   
   /* Set map, body, and html to 100% of the screen size. */
@@ -9,6 +10,7 @@ body {
   html {
     height: 200px;
   }
+
 .center {
   margin: 50px 25%;
 

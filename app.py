@@ -53,5 +53,22 @@ def get_results3():
     return jsonify(poop3)
 
 
+@app.route("/test4")
+def get_results4():
+    sightings = db.sightings.find()
+    poop = []
+    for sights in sightings:
+        sights.pop("_id")
+        poop.append(sights)
+    print(poop)
+    df = pd.DataFrame(poop)
+    df["date"] = pd.to_datetime(df.date, format='%m/%d/%Y')
+    df['months'] = df['date'].apply(lambda x:x.strftime('%B'))
+    df = df.groupby('months')['shape'].count()
+    new_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    series1 = df.reindex(new_order, axis=0)
+    poop4 = {'months': list(series1.index), 'count': list(series1)}
+    return jsonify(poop4)
+
 if __name__ == '__main__':
     app.run(debug=True)

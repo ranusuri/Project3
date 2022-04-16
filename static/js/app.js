@@ -7,6 +7,68 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
+
+// Fetch the JSON data and console log it
+var queryUrl3 = "http://127.0.0.1:5000/test4"
+
+       
+d3.json(queryUrl3).then(function (data) {
+    console.log(data);
+    
+
+    function dynamicColors() {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+    }
+    
+    function poolColors(a) {
+        var pool = [];
+        for(i = 0; i < a; i++) {
+            pool.push(dynamicColors());
+        }
+        return pool;
+    }
+
+    var trace1 = {
+        type: "line",
+        x: data.months,
+        y: data.count,
+        orientation: "v",
+        marker: {color: poolColors(data.count.length)}
+                
+    };
+
+    var data1 = [trace1];
+    var title = "UFO shape sightings in 2019";
+
+    // Apply a title to the layout
+    var layout1 = {
+        title: {
+            text: 'UFO shape sightings in 2019'
+        },
+        xaxis: {
+            title: {text:'Months'},
+            tickmode: 'linear'
+        },
+        yaxis: {
+            title: {text: "Number of Sightings"},
+            tickmode: 'linear',
+            tick0: 0,
+            dtick: 10
+        }, 
+        autosize: false,
+        width: 1500,
+        height: 800
+    
+ };
+ Plotly.newPlot("line", data1, layout1);
+      
+
+})
+
+
 // Fetch the JSON data and console log it
 var queryUrl3 = "http://127.0.0.1:5000/test3"
 
@@ -50,9 +112,14 @@ d3.json(queryUrl3).then(function (data) {
                 min: 0,
                 max: 1000
               }
+              },
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'UFO sightings by description'
+                }
             }
-        }
-          
+            }
       })
       
 
